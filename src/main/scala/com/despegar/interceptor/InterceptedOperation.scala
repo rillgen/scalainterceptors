@@ -9,7 +9,10 @@ import scala.util.Success
 
 class InterceptedOperation[REQ <: Request, RES <: Response](operation: Operation[REQ, RES], interceptors: List[Interceptor[REQ, RES]]) extends Operation[REQ, RES] {
   override def execute(request: REQ): Try[RES] = {
-    interceptors.foldLeft(Try(request))((request, interceptor) => interceptor.processRequest(request)) match {
+    interceptors.foldLeft(Try(request))((request, interceptor) => request match {
+      case Success(request) => interceptor.processRequest(request)
+      case Failure(ex)      => Failure(ex)      
+    }) match {
       case Success(request) => interceptors.foldRight(operation.execute(request))((interceptor, response) => interceptor.processResponse(request, response))
       case Failure(ex)      => Failure(ex)
     }

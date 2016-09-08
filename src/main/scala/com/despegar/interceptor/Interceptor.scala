@@ -6,7 +6,7 @@ import scala.util.Try
 
 trait Interceptor[REQ <: Request, RES <: Response] {
   
-  def processRequest(request :Try[REQ]) :Try[REQ]
+  def processRequest(request :REQ) :Try[REQ]
     
   def processResponse(request :REQ, response :Try[RES]) :Try[RES]
   
