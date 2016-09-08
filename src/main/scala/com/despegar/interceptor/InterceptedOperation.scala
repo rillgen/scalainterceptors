@@ -11,12 +11,9 @@ import com.despegar.interceptor.model.SuccessResponse
 
 class InterceptedOperation[REQ <: Request, RES <: SuccessResponse](operation: Operation[REQ, RES], interceptors: List[Interceptor[REQ, RES]]) extends Operation[REQ, RES] {
   override def execute(request: REQ): Try[Either[ErrorResponse, RES]] = {
-    interceptors.foldLeft(Try(request))((request, interceptor) => request match {
-      case Success(request) => interceptor.processRequest(request)
-      case Failure(ex)      => Failure(ex)      
-    }) match {
-      case Success(request) => interceptors.foldRight(operation.execute(request))((interceptor, response) => interceptor.processResponse(request, response))
-      case Failure(ex)      => Failure(ex)
-    }
+    // Request Interceptors
+    interceptors.foldLeft(Try(request))((request, interceptor) => request.flatMap(interceptor.processRequest(_)))
+      // Response Interceptors
+      .flatMap { request => interceptors.foldRight(operation.execute(request))((interceptor, response) => interceptor.processResponse(request, response)) }
   }
 }
