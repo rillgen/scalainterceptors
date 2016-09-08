@@ -1,0 +1,16 @@
+target/
+.idea
+.lib
+.idea_modules
+*.iml
+.history
+logback-test.xml
+.classpath
+.project
+.settings/
+.cache
+.worksheet
+.scala_dependencies
+.cache-main
+.cache-tests
+/bin/
