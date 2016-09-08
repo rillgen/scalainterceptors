@@ -1,5 +1,3 @@
 package com.despegar.interceptor.model
 
-class Request {
-  
-}
+class Request

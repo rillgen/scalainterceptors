@@ -4,6 +4,9 @@ import com.despegar.interceptor.model.Request
 import com.despegar.interceptor.model.Response
 import scala.util.Try
 import scala.util.Success
+import com.despegar.interceptor.model.SuccessResponse
+import com.despegar.interceptor.model.ErrorResponse
+import com.despegar.interceptor.model.HappyApiResponse
 
 object TestApp extends App {
   
@@ -18,23 +21,23 @@ object TestApp extends App {
   
 }
 
-case class ChattyOperation(name :String) extends Operation[Request, Response] {
+case class ChattyOperation(name :String) extends Operation[Request, HappyApiResponse] {
   
-  override def execute(request :Request) :Try[Response] = {
+  override def execute(request :Request) :Try[Either[ErrorResponse, HappyApiResponse]] = {
     println(s"${name} on execute operation!")    
-    Success(new Response)
+    Success(Right(new HappyApiResponse))
   }
   
 }
 
-case class ChattyInterceptor(name :String) extends Interceptor[Request, Response] {
+case class ChattyInterceptor(name :String) extends Interceptor[Request, HappyApiResponse] {
   
     override def processRequest(request :Request) :Try[Request] = {
       println(s"${name} on processRequest!")
       Success(request)
     }
     
-    override def processResponse(request :Request, response :Try[Response]) :Try[Response] = {
+    override def processResponse(request :Request, response :Try[Either[ErrorResponse, HappyApiResponse]]) :Try[Either[ErrorResponse, HappyApiResponse]] = {
       println(s"${name} on processResponse!")
       response
     }
